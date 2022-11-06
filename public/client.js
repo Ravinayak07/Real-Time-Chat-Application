@@ -1,53 +1,56 @@
-const socket = io()
+const socket = io();
 let name;
-let textarea = document.querySelector('#textarea')
-let messageArea = document.querySelector('.message__area')
+let textarea = document.querySelector("#textarea");
+let messageArea = document.querySelector(".message__area");
+
+//Ask from username input
 do {
-    name = prompt('Please enter your name: ')
-} while(!name)
+  name = prompt("Please enter your name: ");
+} while (!name); //It will keep asking until the user enters the name
 
-textarea.addEventListener('keyup', (e) => {
-    if(e.key === 'Enter') {
-        sendMessage(e.target.value)
-    }
-})
+//send message logic when Enter is clicked
+textarea.addEventListener("keyup", (e) => {
+  if (e.key === "Enter") {
+    sendMessage(e.target.value);
+  }
+});
 
+//logic behind sending message
 function sendMessage(message) {
-    let msg = {
-        user: name,
-        message: message.trim()
-    }
-    // Append 
-    appendMessage(msg, 'outgoing')
-    textarea.value = ''
-    scrollToBottom()
+  let msg = {
+    user: name,
+    message: message.trim(),
+  };
+  // Append
+  appendMessage(msg, "outgoing");
+  textarea.value = "";
+  scrollToBottom();
 
-    // Send to server 
-    socket.emit('message', msg)
-
+  // Send to server
+  socket.emit("message", msg);
 }
 
+//append message and display username and message
 function appendMessage(msg, type) {
-    let mainDiv = document.createElement('div')
-    let className = type
-    mainDiv.classList.add(className, 'message')
+  let mainDiv = document.createElement("div");
+  let className = type;
+  mainDiv.classList.add(className, "message");
 
-    let markup = `
-        <h4>${msg.user}</h4>
+  let markup = `
+        <h4>${msg.user}</h4>    
         <p>${msg.message}</p>
-    `
-    mainDiv.innerHTML = markup
-    messageArea.appendChild(mainDiv)
+    `;
+  mainDiv.innerHTML = markup;
+  messageArea.appendChild(mainDiv);
 }
 
-// Recieve messages 
-socket.on('message', (msg) => {
-    appendMessage(msg, 'incoming')
-    scrollToBottom()
-})
+// Recieve messages
+socket.on("message", (msg) => {
+  appendMessage(msg, "incoming");
+  scrollToBottom();
+});
 
+//Automatically scroll
 function scrollToBottom() {
-    messageArea.scrollTop = messageArea.scrollHeight
+  messageArea.scrollTop = messageArea.scrollHeight;
 }
-
-
